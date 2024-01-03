@@ -1,0 +1,32 @@
+#!/bin/bash
+
+<<cmt
+Write a shell script that checks whether a specified service is running and restarts it if 
+it's not running.
+cmt
+
+shopt -s nocasematch
+
+read -p "Enter service name to checking Status:"  SERVICE
+STATUS=service $SERVICE status | grep Active | awk '{print $2}'
+
+if [[ $STATUS == active ]]
+then 
+    echo -e "the service $SERVICE is active"
+else
+    echo -e "The service is not installed"
+    read -p "do you want to start this service (y/n):" CHOICE
+        
+        if [[ $CHOICE == y ]]
+        then
+        apt install $SERVICE -y
+        echo -e "service has been installed successfully"
+        service restart $SERVICE
+        echo -e "The $SERVICE service is started."
+        service $SERVICE status | egrep -i "active|ssh.service - "
+        else
+        echo -e "Thanks for using this shell."
+        fi
+        
+        shopt -u nocasematch
+fi
